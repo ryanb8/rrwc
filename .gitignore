@@ -15,3 +15,4 @@ Cargo.lock
 
 *.vscode
 **/.DS_Store
+benchmark_output
