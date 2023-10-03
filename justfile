@@ -1,6 +1,9 @@
-benchmark:
+help:
+  # Just commands:
+  just summary
+
+benchmark: compile
   ./script/benchmark.sh
 
-# this is a comment
-another-recipe:
-  @echo 'This is another recipe.'
+compile:
+  cargo build --release
