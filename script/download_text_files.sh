@@ -18,14 +18,14 @@ cat "$kjvdir"/*.txt > benchmark_texts/kjv_1x.txt
 
 echo "Generating KJV 10x"
 rm -f benchmark_texts/kjv_10x.txt
-for i in {1..5}
+for i in {1..10}
 do
    cat benchmark_texts/kjv_1x.txt >> benchmark_texts/kjv_10x.txt
 done
 
 echo "Generating KJV 100x"
 rm -f benchmark_texts/kjv_100x.txt
-for i in {1..5}
+for i in {1..10}
 do
    cat benchmark_texts/kjv_10x.txt >> benchmark_texts/kjv_100x.txt
 done

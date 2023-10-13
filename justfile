@@ -1,6 +1,9 @@
 help:
   # Just commands:
-  just summary
+  just --list
+
+download-test-texts:
+  ./script/download_text_files.sh
 
 benchmark: compile
   ./script/benchmark.sh
