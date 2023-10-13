@@ -38,15 +38,16 @@ pub fn wc_naive(fp: &String) -> WcResult {
 pub fn wc_naive_rayon(fp: &String) -> WcResult {
     let mut t: (usize, usize, usize) = (0, 0, 0);
     if let Ok(lines) = read_lines(fp) {
-        let ts: Vec<(usize, usize, usize)> = lines
+        t = lines
             .par_bridge()
             .map(|l| naive_basic_line_count(l.unwrap()))
-            .collect();
-
-        t = ts.into_par_iter().reduce(
-            || (0usize, 0usize, 0usize),
-            |a: (usize, usize, usize), b: (usize, usize, usize)| (a.0 + b.0, a.1 + b.1, a.2 + b.2),
-        );
+            // .into_par_iter()
+            .reduce(
+                || (0usize, 0usize, 0usize),
+                |a: (usize, usize, usize), b: (usize, usize, usize)| {
+                    (a.0 + b.0, a.1 + b.1, a.2 + b.2)
+                },
+            );
     };
 
     WcResult {
