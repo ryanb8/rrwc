@@ -58,6 +58,29 @@ pub fn wc_naive_rayon(fp: &String) -> WcResult {
     }
 }
 
+pub fn wc_naive_rayon_big_buf(fp: &String) -> WcResult {
+    let mut t: (usize, usize, usize) = (0, 0, 0);
+    if let Ok(lines) = read_lines_big_buf(fp, 1000000) {
+        t = lines
+            .par_bridge()
+            .map(|l| naive_basic_line_count(l.unwrap()))
+            // .into_par_iter()
+            .reduce(
+                || (0usize, 0usize, 0usize),
+                |a: (usize, usize, usize), b: (usize, usize, usize)| {
+                    (a.0 + b.0, a.1 + b.1, a.2 + b.2)
+                },
+            );
+    };
+
+    WcResult {
+        input_path: fp.to_string(),
+        linecount: t.0,
+        wordcount: t.1,
+        bytecount: t.2,
+    }
+}
+
 fn naive_basic_line_count(l: String) -> (usize, usize, usize) {
     let this_bytes: usize = l.len() + 1;
     let this_words: usize = l
@@ -75,4 +98,12 @@ where
 {
     let file = File::open(filename)?;
     Ok(io::BufReader::new(file).lines())
+}
+
+fn read_lines_big_buf<P>(filename: P, capacity: usize) -> io::Result<io::Lines<io::BufReader<File>>>
+where
+    P: AsRef<Path>,
+{
+    let file = File::open(filename)?;
+    Ok(io::BufReader::with_capacity(capacity, file).lines())
 }

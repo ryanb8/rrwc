@@ -1,5 +1,6 @@
 use ryan_wc::wc_naive;
 use ryan_wc::wc_naive_rayon;
+use ryan_wc::wc_naive_rayon_big_buf;
 use ryan_wc::WcResult;
 use std::env;
 
@@ -11,7 +12,8 @@ fn main() {
     let wc_result: WcResult = match ver.as_str() {
         "naive" => wc_naive(fp),
         "naive_rayon" => wc_naive_rayon(fp),
-        _ => panic!("Must use value in ['naive', 'naive_rayon']"),
+        "naive_rayon_big_buf" => wc_naive_rayon_big_buf(fp),
+        _ => panic!("Must use value in ['naive', 'naive_rayon', 'naive_rayon_big_buf']"),
     };
 
     println!("Using wc version: {}", ver);
