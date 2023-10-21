@@ -1,7 +1,10 @@
 use std::fs::File;
 use std::io::{self, BufRead, Read};
 use std::path::Path;
+use std::str::{from_utf8, from_utf8_unchecked, Chars};
 pub mod misfit_toys;
+
+const BUFFER_SIZE: usize = 8 * 1024;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct WcResult {
@@ -54,48 +57,97 @@ where
     Ok(io::BufReader::new(file).lines())
 }
 
-pub fn wc_low_level_full_file(fp: &String) -> WcResult {
-    let mut f = File::open(fp).unwrap();
-    let mut text = String::new();
-
-    let _ = f.read_to_string(&mut text);
-
+pub fn wc_low_level_buf_reader(fp: &String) -> WcResult {
+    let mut buf = [0u8; BUFFER_SIZE];
+    // println!("starting");
+    let mut lc_wc_bc: [usize; 3] = [0, 0, 0];
+    let mut this_lc_wc_bc: [usize; 3];
+    let mut c = 0usize;
     let mut prior_char_is_ws: bool = false;
-    let mut lc: usize = 0;
-    let mut wc: usize = 0;
-    let mut bc: usize = 0;
+    if let Ok(mut br) = read_buffer(fp) {
+        loop {
+            let n = br.read(&mut buf).unwrap();
+            // println!("Read {} bytes for count {}", n, c);
+            if n == 0 {
+                break;
+            }
+            let text: &[u8; BUFFER_SIZE] = &buf;
+            let s = match from_utf8(&text[..n]) {
+                Ok(s) => s,
+                Err(e) => {
+                    // println!("WE ARE HERE");
+                    let end = e.valid_up_to();
+                    // This is safe due to the above check
+                    let s = unsafe { from_utf8_unchecked(&text[..end]) };
+                    let offset = (n - end) as i64;
+                    // we could also just hold onto the bytes at the start of our buffer but this is a
+                    // bit simpler IMO
+                    br.seek_relative(-1 * offset).unwrap();
+                    s
+                }
+            };
 
-    for c in text.chars() {
-        bc += c.len_utf8();
-
-        // checking for ws/non-ws is way more time intensive if it's Non-ascii
-        // we handle ascii first
-        if c.is_ascii() && !c.is_ascii_whitespace() {
-            prior_char_is_ws = false;
-        } else if c.is_ascii_whitespace() {
-            // WC only counts \n as new character - I think. There's A lot of code in wc.
-            // https://github.com/coreutils/coreutils/blob/master/src/wc.c#L492
-            if c == '\u{000A}' {
-                lc += 1;
-            }
-            if !prior_char_is_ws && !(bc == 1) {
-                wc += 1;
-            }
-            prior_char_is_ws = true;
-        } else if c.is_whitespace() {
-            if !prior_char_is_ws && !(bc == 1) {
-                wc += 1;
-            }
-            prior_char_is_ws = true;
-        } else if prior_char_is_ws {
-            prior_char_is_ws = false;
+            this_lc_wc_bc = char_count(s.chars(), &mut prior_char_is_ws, c == 0);
+            lc_wc_bc = [
+                lc_wc_bc[0] + this_lc_wc_bc[0],
+                lc_wc_bc[1] + this_lc_wc_bc[1],
+                lc_wc_bc[2] + this_lc_wc_bc[2],
+            ];
+            c += 1;
         }
     }
 
     WcResult {
         input_path: fp.to_string(),
-        linecount: lc,
-        wordcount: wc,
-        bytecount: bc,
+        linecount: lc_wc_bc[0],
+        wordcount: lc_wc_bc[1],
+        bytecount: lc_wc_bc[2],
     }
+}
+
+fn read_buffer<P>(filename: P) -> io::Result<io::BufReader<File>>
+where
+    P: AsRef<Path>,
+{
+    let file = File::open(filename)?;
+    Ok(io::BufReader::new(file))
+}
+
+fn char_count(cs: Chars<'_>, prior_char_is_ws: &mut bool, first_global_batch: bool) -> [usize; 3] {
+    let mut lc_wc_bc: [usize; 3] = [0, 0, 0];
+    let mut i: usize = 0;
+
+    for c in cs {
+        lc_wc_bc[2] += c.len_utf8();
+        // let enter_prior_char_is_ws = prior_char_is_ws.clone();
+
+        // checking for ws/non-ws is way more time intensive if it's Non-ascii
+        // we handle ascii first
+        if c.is_ascii() && !c.is_ascii_whitespace() {
+            *prior_char_is_ws = false;
+        } else if c.is_ascii_whitespace() {
+            // WC only counts \n as new character - I think. There's A lot of code in wc.
+            // https://github.com/coreutils/coreutils/blob/master/src/wc.c#L492
+            if c == '\u{000A}' {
+                lc_wc_bc[0] += 1;
+            }
+            if !*prior_char_is_ws && !(i == 0 && first_global_batch) {
+                lc_wc_bc[1] += 1;
+            }
+            *prior_char_is_ws = true;
+        } else if c.is_whitespace() {
+            if !*prior_char_is_ws && !(i == 0 && first_global_batch) {
+                lc_wc_bc[1] += 1;
+            }
+            *prior_char_is_ws = true;
+        } else if *prior_char_is_ws {
+            *prior_char_is_ws = false;
+        }
+        i += 1;
+        // println!(
+        //     "c: `{c}`, current wc: {},  enter_pib: {enter_prior_char_is_ws}",
+        //     lc_wc_bc[1]
+        // );
+    }
+    return lc_wc_bc;
 }

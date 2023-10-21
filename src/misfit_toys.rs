@@ -1,10 +1,10 @@
-use crate::naive_basic_line_count_by_ref;
-use crate::read_lines;
 use crate::WcResult;
+use crate::{char_count, naive_basic_line_count_by_ref, read_lines, BUFFER_SIZE};
 use rayon::prelude::*;
 use std::fs::File;
-use std::io::{self, BufRead, Read};
+use std::io::{self, BufRead, Read, Seek, SeekFrom};
 use std::path::Path;
+use std::str::{from_utf8, from_utf8_unchecked};
 
 pub fn wc_naive_full_file(fp: &String) -> WcResult {
     let mut f = File::open(fp).unwrap();
@@ -92,4 +92,66 @@ where
 {
     let file = File::open(filename)?;
     Ok(io::BufReader::with_capacity(capacity, file).lines())
+}
+
+pub fn wc_low_level_full_file(fp: &String) -> WcResult {
+    let mut f = File::open(fp).unwrap();
+    let mut text = String::new();
+    let mut prior_char_is_ws: bool = false;
+
+    let _ = f.read_to_string(&mut text);
+
+    let lc_wc_bc = char_count(text.chars(), &mut prior_char_is_ws, true);
+
+    WcResult {
+        input_path: fp.to_string(),
+        linecount: lc_wc_bc[0],
+        wordcount: lc_wc_bc[1],
+        bytecount: lc_wc_bc[2],
+    }
+}
+
+pub fn wc_low_level_custom_buffer(fp: &String) -> WcResult {
+    let mut f = File::open(fp).unwrap();
+    let mut buffer = [0; BUFFER_SIZE];
+
+    let mut lc_wc_bc: [usize; 3] = [0, 0, 0];
+    let mut this_lc_wc_bc: [usize; 3];
+    let mut prior_char_is_ws: bool = false;
+    let mut c: usize = 0;
+
+    loop {
+        let n = f.read(&mut buffer).unwrap();
+        if n == 0 {
+            break;
+        }
+        let text = &buffer[..n];
+        let s = match from_utf8(text) {
+            Ok(s) => s,
+            Err(e) => {
+                // println!("WE HIT THIS!");
+                let end = e.valid_up_to();
+                // This is safe due to the above check
+                let s = unsafe { from_utf8_unchecked(&text[..end]) };
+                let offset = (end - n) as i64;
+                // we could also just hold onto the bytes at the start of our buffer but this is a
+                // bit simpler IMO
+                f.seek(SeekFrom::Current(-1 * offset)).unwrap();
+                s
+            }
+        };
+        this_lc_wc_bc = char_count(s.chars(), &mut prior_char_is_ws, c == 0);
+        lc_wc_bc = [
+            lc_wc_bc[0] + this_lc_wc_bc[0],
+            lc_wc_bc[1] + this_lc_wc_bc[1],
+            lc_wc_bc[2] + this_lc_wc_bc[2],
+        ];
+        c += 1;
+    }
+    WcResult {
+        input_path: fp.to_string(),
+        linecount: lc_wc_bc[0],
+        wordcount: lc_wc_bc[1],
+        bytecount: lc_wc_bc[2],
+    }
 }
