@@ -2,19 +2,49 @@
 
 # TODO: Script to accept two different versions (WC or any of the versions in the rust binary)
 
+die () {
+    echo >&2 "$@"
+    exit 1
+}
+
+[ "$#" -eq 2 ] || die "2 argument required, $# provided"
+
+
+filenames=("moby_dick.txt" "kjv_1x.txt" "kjv_10x.txt" "kjv_100x.txt")
+
+
+gen_call_and_name () {
+    if [[ $1 == "wc" ]]; then
+        gen_wc_call $2
+    else
+        gen_ryan_wc_call $2 $1
+    fi
+}
+
+gen_ryan_wc_call () {
+    echo "'""./target/release/ryan_wc benchmark_texts/$1 $2""'"
+}
+
+gen_wc_call () {
+    echo "'""wc benchmark_texts/$1""'"
+}
+
+
 mkdir benchmark_output
 benchmark_run=$(date +%Y%m%d_%H%M%S)
-benchmark_folder=benchmark_output/"$benchmark_run"
+benchmark_folder=benchmark_output/"$benchmark_run"__$1__$2
 mkdir "$benchmark_folder"
+echo ""
 
-echo "Moby Dick"
-hyperfine --warmup 100 --export-json "$benchmark_folder"/moby_dick.json 'wc benchmark_texts/moby_dick.txt' './target/release/ryan_wc benchmark_texts/moby_dick.txt low_level_full_file'
+for filename in "${filenames[@]}"
+do
+    echo "$filename"
+    benchmark_fn=${filename//.txt/.json}
+    call_1=$(gen_call_and_name "$1" "$filename")
+    call_2=$(gen_call_and_name "$2" "$filename")
+    this_cmd="hyperfine --warmup 10 --export-json $benchmark_folder/$benchmark_fn $call_1 $call_2"
+    echo "running $this_cmd"
+    eval "$this_cmd"
+    echo ""
 
-echo "KJV 1x"
-hyperfine --warmup 10 --export-json "$benchmark_folder"/kjv_1x.json 'wc benchmark_texts/kjv_1x.txt' './target/release/ryan_wc benchmark_texts/kjv_1x.txt low_level_full_file'
-
-echo "KJV 10x"
-hyperfine --warmup 10 --export-json "$benchmark_folder"/kjv_10x.json 'wc benchmark_texts/kjv_10x.txt' './target/release/ryan_wc benchmark_texts/kjv_10x.txt low_level_full_file'
-
-echo "KJV 100x"
-hyperfine --warmup 10 --export-json "$benchmark_folder"/kjv_100x.json 'wc benchmark_texts/kjv_100x.txt' './target/release/ryan_wc benchmark_texts/kjv_100x.txt low_level_full_file'
+done
