@@ -4,8 +4,14 @@ mkdir benchmark_texts
 MYTMPDIR="$(mktemp -d)"
 trap 'rm -rf -- "$MYTMPDIR"' EXIT
 
+echo "Downloading Moby Dick"
+echo "Running \`curl -iH "Accept: text/plain" -o benchmark_texts/moby_dick.txt https://www.gutenberg.org/files/2701/old/moby10b.txt\`"
+curl -iH "Accept: text/plain" -o benchmark_texts/moby_dick.txt https://www.gutenberg.org/files/2701/old/moby10b.txt
+
+
 kjvdir=$MYTMPDIR/kjv
 mkdir "$kjvdir"
+echo "Downloading KJV Bible"
 echo "Running: \`curl -Lo "$kjvdir"/tmp_kjv.zip \"https://archive.org/compress/kjv-text-files/formats=TEXT&file=/kjv-text-files.zip\"\`"
 curl -Lo $kjvdir/tmp_kjv.zip "https://archive.org/compress/kjv-text-files/formats=TEXT&file=/kjv-text-files.zip"
 echo "Running unzip $kjvdir/tmp_kjv.zip -d $kjvdir"
