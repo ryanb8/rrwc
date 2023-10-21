@@ -14,5 +14,5 @@ hyperfine --warmup 10  -N --export-json "$benchmark_folder"/kjv_1x.json 'wc benc
 echo "KJV 10x"
 hyperfine --warmup 10  -N --export-json "$benchmark_folder"/kjv_10x.json 'wc benchmark_texts/kjv_10x.txt' './target/release/ryan_wc benchmark_texts/kjv_10x.txt naive'
 
-echo "KJV 1x"
+echo "KJV 100x"
 hyperfine --warmup 10  -N --export-json "$benchmark_folder"/kjv_100x.json 'wc benchmark_texts/kjv_100x.txt' './target/release/ryan_wc benchmark_texts/kjv_100x.txt naive'

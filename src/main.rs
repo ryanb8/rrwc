@@ -1,4 +1,6 @@
 use ryan_wc::wc_naive;
+use ryan_wc::wc_naive_full_file;
+use ryan_wc::wc_naive_full_file_via_buf;
 use ryan_wc::wc_naive_rayon;
 use ryan_wc::wc_naive_rayon_big_buf;
 use ryan_wc::WcResult;
@@ -13,7 +15,11 @@ fn main() {
         "naive" => wc_naive(fp),
         "naive_rayon" => wc_naive_rayon(fp),
         "naive_rayon_big_buf" => wc_naive_rayon_big_buf(fp),
-        _ => panic!("Must use value in ['naive', 'naive_rayon', 'naive_rayon_big_buf']"),
+        "naive_full_file" => wc_naive_full_file(fp),
+        "full_file_via_buf" => wc_naive_full_file_via_buf(fp),
+        _ => panic!(
+            "Must use value in ['naive', 'naive_rayon', 'naive_rayon_big_buf', 'naive_full_file', 'full_file_via_buf']"
+        ),
     };
 
     println!("Using wc version: {}", ver);
