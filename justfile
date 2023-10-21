@@ -16,6 +16,10 @@ compile:
 profile-compile:
   cargo build --profile=release-with-debug
 
-profile-small:
-  @echo 'Profiling with version $0'
-  cargo instruments -t time --bin ryan_wc --profile release-with-debug benchmark_texts/moby_dick.txt $0
+profile-small version:
+  @echo "Profiling with version $1"
+  cargo instruments -t time --bin ryan_wc --profile release-with-debug benchmark_texts/moby_dick.txt $1
+
+profile-large version:
+  @echo "Profiling with version $1"
+  cargo instruments -t time --bin ryan_wc --profile release-with-debug benchmark_texts/kjv_100x.txt $1
