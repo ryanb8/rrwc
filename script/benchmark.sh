@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-# TODO: Script to accept two different versions (WC or any of the versions in the rust binary)
-
 die () {
     echo >&2 "$@"
     exit 1
@@ -9,9 +7,7 @@ die () {
 
 [ "$#" -eq 2 ] || die "2 argument required, $# provided"
 
-
 filenames=("moby_dick.txt" "kjv_1x.txt" "kjv_10x.txt" "kjv_100x.txt")
-
 
 gen_call_and_name () {
     if [[ $1 == "wc" ]]; then
@@ -28,7 +24,6 @@ gen_ryan_wc_call () {
 gen_wc_call () {
     echo "'""wc benchmark_texts/$1""'"
 }
-
 
 mkdir benchmark_output
 benchmark_run=$(date +%Y%m%d_%H%M%S)
