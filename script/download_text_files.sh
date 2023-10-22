@@ -4,10 +4,16 @@ mkdir benchmark_texts
 MYTMPDIR="$(mktemp -d)"
 trap 'rm -rf -- "$MYTMPDIR"' EXIT
 
+echo "Creating Hello World"
+echo "Hello World" > benchmark_texts/hello_world.txt
+
 echo "Downloading Moby Dick"
 echo "Running \`curl -iH "Accept: text/plain" -o benchmark_texts/moby_dick.txt https://www.gutenberg.org/files/2701/old/moby10b.txt\`"
 curl -iH "Accept: text/plain" -o benchmark_texts/moby_dick.txt https://www.gutenberg.org/files/2701/old/moby10b.txt
 
+echo "Creating Moby Dick 1st chapter only"
+cp benchmark_texts/moby_dick.txt benchmark_texts/moby_dick_chapter_1_only.txt
+perl -ne '/CHAPTER 1\s/../CHAPTER 2\s/ and print' benchmark_texts/moby_dick.txt >  benchmark_texts/moby_dick_chapter_1_only.txt
 
 kjvdir=$MYTMPDIR/kjv
 mkdir "$kjvdir"

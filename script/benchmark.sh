@@ -7,7 +7,7 @@ die () {
 
 [ "$#" -eq 2 ] || die "2 argument required, $# provided"
 
-filenames=("moby_dick.txt" "kjv_1x.txt" "kjv_10x.txt" "kjv_100x.txt")
+filenames=("hello_world.txt" "moby_dick_chapter_1_only.txt" "moby_dick.txt" "kjv_1x.txt" "kjv_10x.txt" "kjv_100x.txt")
 
 gen_call_and_name () {
     if [[ $1 == "wc" ]]; then
@@ -37,7 +37,7 @@ do
     benchmark_fn=${filename//.txt/.json}
     call_1=$(gen_call_and_name "$1" "$filename")
     call_2=$(gen_call_and_name "$2" "$filename")
-    this_cmd="hyperfine --warmup 10 --export-json $benchmark_folder/$benchmark_fn $call_1 $call_2"
+    this_cmd="hyperfine --warmup 10 -n --export-json $benchmark_folder/$benchmark_fn $call_1 $call_2"
     echo "running $this_cmd"
     eval "$this_cmd"
     echo ""

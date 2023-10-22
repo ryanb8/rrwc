@@ -7,8 +7,11 @@ help:
 download-test-texts:
   ./script/download_text_files.sh
 
-benchmark: compile
-  ./script/benchmark.sh
+benchmark version_1 version_2:
+  @echo 'Use form `just benchmark <wc_or_version> <wc_or_version>`'
+  @echo recieved version_1 = $1 and version_2 = $2
+  just compile
+  ./script/benchmark.sh $1 $2
 
 compile:
   cargo build --release
