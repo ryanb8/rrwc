@@ -42,12 +42,12 @@ Benchmarks run on 2019 MBP 2.6 GHz 6-Core Intel Core i7 comparing `wc` and my `l
 
 Run `just download-test-texts` to download all the texts for benchmarking.
 
-Run `just benchmark <version_1> <version_2>` to compare to versions with the benchmark script. Currently supported versions are:
+Run `just benchmark <version_1> <version_2>` to compare two versions with the benchmark script. Currently supported versions are:
 - `wc` - the GNU tool
 - My implementations:
   - `naive` - the 2 minute version
   - `low_level_buf_reader` - a low level loop that processes character by character using a bufreader for io. This is the best implementation so far.
-- My Misfit toys, not trustworthy implementations: 
+- My misfit toys- not trustworthy implementations: 
   - `low_level_full_file`
   - `low_level_custom_buffer`
   - `naive_rayon`
@@ -66,7 +66,6 @@ Run `just profile-small <version>` or `just profile-large <version>`. `wc` is no
 
 # TODO (which likely won't happen - this was for fun)
 
-- Add a license + contributing (MIT)
 - rename the project + binary ryans_rust_word_counter and rwcc
 - text files in the 100kb and 500kb values
 - pretty graphs
