@@ -37,7 +37,7 @@ do
     benchmark_fn=${filename//.txt/.json}
     call_1=$(gen_call_and_name "$1" "$filename")
     call_2=$(gen_call_and_name "$2" "$filename")
-    this_cmd="hyperfine --warmup 10 -n --export-json $benchmark_folder/$benchmark_fn $call_1 $call_2"
+    this_cmd="hyperfine --warmup 10 -N --export-json $benchmark_folder/$benchmark_fn $call_1 $call_2"
     echo "running $this_cmd"
     eval "$this_cmd"
     echo ""
