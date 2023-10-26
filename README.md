@@ -23,14 +23,14 @@ You should be able to `just compile` and have it built. You can install it if yo
 
 Benchmarks run on 2019 MBP 2.6 GHz 6-Core Intel Core i7 comparing `wc` and my `low_level_buf_reader` version.
 
-| File                    | File Size | wc Time | ryans_rust_wc Time | Winner   | Winner is n times faster |
-| ----------------------- | --------- | ------- | ------------------ | -------- | ------------------------ |
-| "Hello world"           | 12 b      | 2.0ms   | 2.7ms              | wc       | 1.34                     |
-| Moby Dick's 1st Chapter | 13 Kb     | 2.2ms   | 2.7ms              | wc       | 1.22                     |
-| Moby Dick               | 1.3 Mb    | 9.1ms   | 5.8ms              | **rrwc** | **1.58**                 |
-| KJV Bible               | 4.3 Mb    | 25.0ms  | 13.4ms             | **rrwc** | **1.87**                 |
-| 10x KJV Bible           | 43.3 Mb   | 223.4ms | 107.4ms            | **rrwc** | **2.08**                 |
-| 100x KJV Bible          | 432.8 Mb  | 2.249s  | 1.083s             | **rrwc** | **2.08**                 |
+| File                    | File Size | wc Time | ryans_rust_wc Time | Winner   | rrwc perf improvement |
+| ----------------------- | --------- | ------- | ------------------ | -------- | --------------------- |
+| "Hello world"           | 12 b      | 2.0ms   | 2.7ms              | wc       | 0.75                  |
+| Moby Dick's 1st Chapter | 13 Kb     | 2.2ms   | 2.7ms              | wc       | 0.82                  |
+| Moby Dick               | 1.3 Mb    | 9.1ms   | 5.8ms              | **rrwc** | **1.58**              |
+| KJV Bible               | 4.3 Mb    | 25.0ms  | 13.4ms             | **rrwc** | **1.87**              |
+| 10x KJV Bible           | 43.3 Mb   | 223.4ms | 107.4ms            | **rrwc** | **2.08**              |
+| 100x KJV Bible          | 432.8 Mb  | 2.249s  | 1.083s             | **rrwc** | **2.08**              |
 
 ## Requirenments
 
