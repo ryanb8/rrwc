@@ -47,8 +47,6 @@ fn naive_basic_line_count_by_ref(l: &String) -> (usize, usize, usize) {
     return (1, this_words, this_bytes);
 }
 
-// The output is wrapped in a Result to allow matching on errors
-// Returns an Iterator to the Reader of the lines of the file.
 fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
 where
     P: AsRef<Path>,
@@ -59,7 +57,6 @@ where
 
 pub fn wc_low_level_buf_reader(fp: &String) -> WcResult {
     let mut buf = [0u8; BUFFER_SIZE];
-    // println!("starting");
     let mut lc_wc_bc: [usize; 3] = [0, 0, 0];
     let mut this_lc_wc_bc: [usize; 3];
     let mut c = 0usize;
@@ -67,7 +64,6 @@ pub fn wc_low_level_buf_reader(fp: &String) -> WcResult {
     if let Ok(mut br) = read_buffer(fp) {
         loop {
             let n = br.read(&mut buf).unwrap();
-            // println!("Read {} bytes for count {}", n, c);
             if n == 0 {
                 break;
             }
@@ -75,7 +71,6 @@ pub fn wc_low_level_buf_reader(fp: &String) -> WcResult {
             let s = match from_utf8(&text[..n]) {
                 Ok(s) => s,
                 Err(e) => {
-                    // println!("WE ARE HERE");
                     let end = e.valid_up_to();
                     // This is safe due to the above check
                     let s = unsafe { from_utf8_unchecked(&text[..end]) };
@@ -119,14 +114,13 @@ fn char_count(cs: Chars<'_>, prior_char_is_ws: &mut bool, first_global_batch: bo
 
     for c in cs {
         lc_wc_bc[2] += c.len_utf8();
-        // let enter_prior_char_is_ws = prior_char_is_ws.clone();
 
         // checking for ws/non-ws is way more time intensive if it's Non-ascii
         // we handle ascii first
         if c.is_ascii() && !c.is_ascii_whitespace() {
             *prior_char_is_ws = false;
         } else if c.is_ascii_whitespace() {
-            // WC only counts \n as new character - I think. There's A lot of code in wc.
+            // WC only counts \n as new character - I think.
             // https://github.com/coreutils/coreutils/blob/master/src/wc.c#L492
             if c == '\u{000A}' {
                 lc_wc_bc[0] += 1;
@@ -144,10 +138,6 @@ fn char_count(cs: Chars<'_>, prior_char_is_ws: &mut bool, first_global_batch: bo
             *prior_char_is_ws = false;
         }
         i += 1;
-        // println!(
-        //     "c: `{c}`, current wc: {},  enter_pib: {enter_prior_char_is_ws}",
-        //     lc_wc_bc[1]
-        // );
     }
     return lc_wc_bc;
 }

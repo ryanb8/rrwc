@@ -15,6 +15,18 @@ echo "Creating Moby Dick 1st chapter only"
 cp benchmark_texts/moby_dick.txt benchmark_texts/moby_dick_chapter_1_only.txt
 perl -ne '/CHAPTER 1\s/../CHAPTER 2\s/ and print' benchmark_texts/moby_dick.txt >  benchmark_texts/moby_dick_chapter_1_only.txt
 
+echo "Creating Moby Dick 1st 10 chapters only"
+cp benchmark_texts/moby_dick.txt benchmark_texts/moby_dick_chapter_1_10.txt
+perl -ne '/CHAPTER 1\s/../CHAPTER 10\s/ and print' benchmark_texts/moby_dick.txt >  benchmark_texts/moby_dick_chapter_1_10.txt
+
+echo "Creating Moby Dick 1st 25 chapters"
+cp benchmark_texts/moby_dick.txt benchmark_texts/moby_dick_chapter_1_25.txt
+perl -ne '/CHAPTER 1\s/../CHAPTER 25\s/ and print' benchmark_texts/moby_dick.txt >  benchmark_texts/moby_dick_chapter_1_25.txt
+
+echo "Creating Moby Dick 1st 50 chapters"
+cp benchmark_texts/moby_dick.txt benchmark_texts/moby_dick_chapter_1_50.txt
+perl -ne '/CHAPTER 1\s/../CHAPTER 50\s/ and print' benchmark_texts/moby_dick.txt >  benchmark_texts/moby_dick_chapter_1_50.txt
+
 kjvdir=$MYTMPDIR/kjv
 mkdir "$kjvdir"
 echo "Downloading KJV Bible"

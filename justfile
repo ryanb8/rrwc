@@ -21,8 +21,8 @@ profile-compile:
 
 profile-small version:
   @echo "Profiling with version $1"
-  cargo instruments -t time --bin ryan_wc --profile release-with-debug benchmark_texts/moby_dick.txt $1
+  cargo instruments -t time --bin rrwc --profile release-with-debug benchmark_texts/moby_dick.txt $1
 
 profile-large version:
   @echo "Profiling with version $1"
-  cargo instruments -t time --bin ryan_wc --profile release-with-debug benchmark_texts/kjv_10x.txt $1
+  cargo instruments -t time --bin rrwc --profile release-with-debug benchmark_texts/kjv_10x.txt $1

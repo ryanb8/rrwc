@@ -1,10 +1,10 @@
-use ryan_wc::misfit_toys::{
+use rrwc::misfit_toys::{
     wc_low_level_custom_buffer, wc_low_level_full_file, wc_naive_full_file,
     wc_naive_full_file_via_buf, wc_naive_rayon, wc_naive_rayon_big_buf,
 };
-use ryan_wc::{wc_low_level_buf_reader, wc_naive};
+use rrwc::{wc_low_level_buf_reader, wc_naive};
 
-use ryan_wc::WcResult;
+use rrwc::WcResult;
 use std::env;
 
 fn main() {
@@ -27,6 +27,6 @@ fn main() {
         ),
     };
 
-    println!("Using wc version: {}", ver);
+    println!("Using rrwc version: {}", ver);
     println!("{:#?}", wc_result)
 }
