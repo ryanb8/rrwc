@@ -70,8 +70,9 @@ Run `just profile-small <version>` or `just profile-large <version>`. `wc` is no
 
 # TODO (which likely won't happen - this was for fun)
 
+- unit tests
+- Write tests to compare WC and rust output
 - Performance tuning on small files
 - pretty graphs
 - Make profiling useful and figure it out more
-- Write tests to compare WC and rust output
 - Test some more obscure-y edge cases - emojis, etc
