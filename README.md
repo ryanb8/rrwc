@@ -40,12 +40,11 @@ Benchmarks run on 2019 MBP 2.6 GHz 6-Core Intel Core i7 comparing `wc` and my `l
 ## Requirenments
 
 - Rustc 1.63+ (I think), built and tested on rustc 1.73.0
-- [Just](https://github.com/casey/just), if you want to run the just commands. [Install instructions by platform]
-(https://github.com/casey/just#installation).
+- [Just](https://github.com/casey/just), if you want to run the just commands. [Install instructions by platform](https://github.com/casey/just#installation).
 
 ## Running benchmarks
 
-Run `just download-test-texts` to download all the texts for benchmarking.
+Run `just download-test-texts` to download and generate all the texts for benchmarking (5-6Mbg of downloads, close to 500mb once unzipped+generated).
 
 Run `just benchmark <version_1> <version_2>` to compare two versions with the benchmark script. Currently supported versions are:
 - `wc` - the GNU tool
