@@ -9,7 +9,7 @@
 
 # Ryan's Rust Wordcount (rrwc)
 
-My attempt to write a simple word counter in rust. Focusing on performance/speed book style text files (not xml, code, html, etc). Currently we are ~1.8-2.1x more performant than `wc` on very large files, while wc is faster on very small files. Breakeven is around 200kb files. 
+My attempt to write a simple word counter in rust. Focusing on performance/speed book style text files (not xml, code, html, etc). Currently we are ~1.8-2.1x more performant than `wc` on very large files, while wc is faster on very small files. Speed parity is at files around 200kb in size.
 
 To be fair, wc is probably more portable and supports a few options that my version doesn't yet.
 
