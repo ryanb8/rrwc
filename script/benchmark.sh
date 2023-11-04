@@ -12,6 +12,8 @@ filenames=("hello_world.txt" "moby_dick_chapter_1_only.txt" "moby_dick_chapter_1
 gen_call_and_name () {
     if [[ $1 == "wc" ]]; then
         gen_wc_call $2
+    elif [[ $1 == "uuwc" ]]; then
+        gen_uu_wc_call $2
     else
         gen_rrwc_call $2 $1
     fi
@@ -23,6 +25,10 @@ gen_rrwc_call () {
 
 gen_wc_call () {
     echo "'""wc benchmark_texts/$1""'"
+}
+
+gen_uu_wc_call () {
+    echo "'""${HOME}/.cargo/bin/coreutils wc benchmark_texts/$1""'"
 }
 
 mkdir benchmark_output
